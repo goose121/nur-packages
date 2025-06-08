@@ -6,6 +6,7 @@
 , glib
 , libgee
 , pkg-config
+, redshift
 , ...
 } @ args:
 
@@ -41,6 +42,7 @@ stdenv.mkDerivation rec {
     glib
     libgee
     pkg-config
+    redshift
   ];
 
   # build.sh starts with invalid shebang, remove it then do bash
