@@ -52,7 +52,6 @@ stdenv.mkDerivation rec {
 
   installPhase = ''
     mkdir -p $out
-    ls -la $in
     install -Dm 644 resources/rules.conf.dist $out/share/redshift-scheduler/rules.conf.dist
 	  install -Dm 644 resources/redshift-scheduler.desktop $out/share/applications/redshift-scheduler.desktop
 	  install -Dm 755 build/redshift-scheduler $out/bin/redshift-scheduler
