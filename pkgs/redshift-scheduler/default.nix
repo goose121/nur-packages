@@ -42,6 +42,9 @@ stdenv.mkDerivation rec {
     glib
     libgee
     pkg-config
+  ];
+
+  propagatedBuildInputs = [
     redshift
   ];
 
