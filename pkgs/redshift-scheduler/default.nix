@@ -1,14 +1,16 @@
 # When you use pkgs.callPackage, parameters here will be filled with packages from Nixpkgs (if there's a match)
-{ lib
-, stdenv
-, fetchFromGitHub
-, vala
-, glib
-, libgee
-, pkg-config
-, redshift
-, ...
-} @ args:
+{
+  lib,
+  stdenv,
+  fetchFromGitHub,
+  vala,
+  glib,
+  libgee,
+  pkg-config,
+  redshift,
+  makeWrapper,
+  ...
+}@args:
 
 stdenv.mkDerivation rec {
   # Specify package name and version
@@ -36,7 +38,10 @@ stdenv.mkDerivation rec {
   dontFixCmake = true;
 
   # This thing is in Vala
-  nativeBuildInputs = [ vala ];
+  nativeBuildInputs = [
+    vala
+    makeWrapper
+  ];
 
   buildInputs = [
     glib
@@ -44,20 +49,25 @@ stdenv.mkDerivation rec {
     pkg-config
   ];
 
-  propagatedBuildInputs = [
-    redshift
-  ];
-
   # build.sh starts with invalid shebang, remove it then do bash
   buildPhase = ''
+    runHook preBuild
     tail -n +1 build.sh | bash
+    runHook postBuild
   '';
 
   installPhase = ''
+    runHook preInstall
     mkdir -p $out
     install -Dm 644 resources/rules.conf.dist $out/share/redshift-scheduler/rules.conf.dist
-	  install -Dm 644 resources/redshift-scheduler.desktop $out/share/applications/redshift-scheduler.desktop
-	  install -Dm 755 build/redshift-scheduler $out/bin/redshift-scheduler
+    install -Dm 644 resources/redshift-scheduler.desktop $out/share/applications/redshift-scheduler.desktop
+    install -Dm 755 build/redshift-scheduler $out/bin/redshift-scheduler
+
+    runHook postInstall
+  '';
+
+  postInstall = ''
+    wrapProgram $out/bin/redshift-scheduler --prefix PATH : ${redshift}/bin
   '';
 
   # stdenv.mkDerivation automatically does the rest for you
