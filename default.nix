@@ -6,7 +6,8 @@
 # commands such as:
 #     nix-build -A mypackage
 
-{ pkgs ? import <nixpkgs> { } }:
+{ pkgs ? import <nixpkgs> { }
+, fenix ? import (fetchTarball "https://github.com/nix-community/fenix/archive/main.tar.gz") { }}:
 
 {
   # The `lib`, `modules`, and `overlays` names are special
@@ -15,6 +16,7 @@
   overlays = import ./overlays; # nixpkgs overlays
 
   redshift-scheduler = pkgs.callPackage ./pkgs/redshift-scheduler { };
+  kiku = pkgs.callPackage ./pkgs/kiku { };
   # some-qt5-package = pkgs.libsForQt5.callPackage ./pkgs/some-qt5-package { };
   # ...
 }
